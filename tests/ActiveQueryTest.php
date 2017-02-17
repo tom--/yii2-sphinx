@@ -23,11 +23,49 @@ class ActiveQueryTest extends TestCase
         $results = ArticleIndex::find()
             ->match('about')
             ->facets([
-                'author_id'
+                'author_id',
             ])
             ->search();
         $this->assertNotEmpty($results['hits'], 'Unable to query with facet');
         $this->assertNotEmpty($results['facets']['author_id'], 'Unable to fill up facet');
         $this->assertTrue($results['hits'][0] instanceof ArticleIndex, 'Unable to populate results as AR object');
+    }
+
+    public function testWhereCompareIntAttr()
+    {
+        $results = ArticleIndex::find()
+            ->select('id')
+            ->match('about')
+            ->where(['<', 'author_id', 5])
+            ->limit(50)
+            ->column();
+        $this->assertNotEmpty($results);
+
+        $results = ArticleIndex::find()
+            ->select('id')
+            ->match('about')
+            ->where(['<', 'author_id', '5'])
+            ->limit(50)
+            ->column();
+        $this->assertNotEmpty($results);
+    }
+
+    public function testWhereCompareTimestampAttr()
+    {
+        $results = ArticleIndex::find()
+            ->select('id')
+            ->match('about')
+            ->where(['<', 'add_date', 1405000000])
+            ->limit(50)
+            ->column();
+        $this->assertNotEmpty($results);
+
+        $results = ArticleIndex::find()
+            ->select('id')
+            ->match('about')
+            ->where(['<', 'add_date', '1405000000'])
+            ->limit(50)
+            ->column();
+        $this->assertNotEmpty($results);
     }
 }
