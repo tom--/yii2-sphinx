@@ -49,4 +49,23 @@ class ActiveQueryTest extends TestCase
             ->column();
         $this->assertNotEmpty($results);
     }
+
+    public function testWhereCompareTimestampAttr()
+    {
+        $results = ArticleIndex::find()
+            ->select('id')
+            ->match('about')
+            ->where(['<', 'add_date', 1405000000])
+            ->limit(50)
+            ->column();
+        $this->assertNotEmpty($results);
+
+        $results = ArticleIndex::find()
+            ->select('id')
+            ->match('about')
+            ->where(['<', 'add_date', '1405000000'])
+            ->limit(50)
+            ->column();
+        $this->assertNotEmpty($results);
+    }
 }
